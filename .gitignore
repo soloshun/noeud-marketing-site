@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# remotion studio deps and render artifacts
+/motion-studio/node_modules
+/motion-studio/out

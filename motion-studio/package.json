@@ -1,0 +1,19 @@
+{
+  "name": "noeud-motion-studio",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Remotion compositions for NOEUD brand film. Renders to ../public/",
+  "scripts": {
+    "studio": "remotion studio",
+    "render": "remotion render NoeudFilm ../public/noeud-film.mp4 --codec=h264 --crf=20",
+    "render:webm": "remotion render NoeudFilm ../public/noeud-film.webm --codec=vp8 --crf=22",
+    "still": "remotion still NoeudFilm ../public/noeud-film-poster.jpg --frame=200"
+  },
+  "dependencies": {
+    "@remotion/cli": "^4.0.509",
+    "@remotion/google-fonts": "^4.0.509",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "remotion": "^4.0.509"
+  }
+}

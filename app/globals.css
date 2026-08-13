@@ -1,26 +1,262 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* ------------------------------------------------------------------
+   NOEUD design tokens
+   Palette derived from the brand deck: deep plum as the authority
+   colour, a cool sky accent for data surfaces, warm-neutral paper.
+------------------------------------------------------------------- */
+
+@theme {
+  /* Paper + ink */
+  --color-paper: #ffffff;
+  --color-paper-soft: #f8f8fa;
+  --color-paper-mist: #eef0f5;
+  --color-ink: #16121b;
+  --color-ink-soft: #55505e;
+  --color-ink-faint: #857f8f;
+  --color-line: #e7e4ec;
+  --color-line-soft: #f0eef3;
+
+  /* Plum — the brand spine */
+  --color-plum-50: #fcf5fa;
+  --color-plum-100: #f6e7f1;
+  --color-plum-200: #eacbe0;
+  --color-plum-300: #d7a3c6;
+  --color-plum-400: #bc72a6;
+  --color-plum-500: #9c4a84;
+  --color-plum-600: #7e3169;
+  --color-plum-700: #642353;
+  --color-plum-800: #4a1039;
+  --color-plum-900: #380b2a;
+  --color-plum-950: #23061a;
+
+  /* Sky — data + institutional surfaces */
+  --color-sky-50: #f2fafd;
+  --color-sky-100: #e4f4fb;
+  --color-sky-200: #c3e7f6;
+  --color-sky-300: #9bd7f0;
+  --color-sky-400: #6fc0e2;
+  --color-sky-500: #3f9ec7;
+  --color-sky-600: #2b7fa6;
+  --color-sky-700: #23637f;
+
+  /* Accent blue — every eyebrow and section index in the deck */
+  --color-azure-400: #6ba3e0;
+  --color-azure-500: #4a8fd4;
+  --color-azure-600: #3b74b0;
+
+  /* Signals */
+  --color-flag: #d1453b;
+  --color-flag-soft: #f7dedc;
+  --color-verdant: #17795a;
+  --color-verdant-soft: #dbefe7;
+
+  /* Type */
+  --font-display: var(--font-satoshi), system-ui, sans-serif;
+  --font-sans: var(--font-satoshi), system-ui, -apple-system, sans-serif;
+  --font-serif: var(--font-serif), "Iowan Old Style", Georgia, serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, "SFMono-Regular", monospace;
+
+  /* Motion */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-quint: cubic-bezier(0.83, 0, 0.17, 1);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+/* ------------------------------------------------------------------
+   Base
+------------------------------------------------------------------- */
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
+  /* the sticky masthead is 4.5rem; keep anchor targets clear of it */
+  scroll-padding-top: 6rem;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-feature-settings: "cv05" 1, "ss01" 1;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--color-plum-800);
+  color: #fff;
+}
+
+/* Numeric surfaces should never jitter as digits change */
+.tnum {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* ------------------------------------------------------------------
+   Typography primitives
+------------------------------------------------------------------- */
+
+@utility display-xl {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(2.75rem, 6.1vw, 5rem);
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+}
+
+@utility display-lg {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(2rem, 3.9vw, 3.15rem);
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+}
+
+@utility display-md {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(1.55rem, 2.4vw, 2.1rem);
+  line-height: 1.14;
+  letter-spacing: -0.025em;
+}
+
+@utility display-sm {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.25rem;
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+}
+
+@utility eyebrow {
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+/* The deck's voice for asides, pull-quotes and the footer sign-off. */
+@utility aside-serif {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: 0.005em;
+}
+
+@utility lede {
+  font-size: clamp(1.0625rem, 1.35vw, 1.1875rem);
+  line-height: 1.62;
+  color: var(--color-ink-soft);
+}
+
+/* ------------------------------------------------------------------
+   Surfaces
+------------------------------------------------------------------- */
+
+@utility shell {
+  width: 100%;
+  max-width: 78rem;
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+
+  @media (min-width: 768px) {
+    padding-inline: 2rem;
+  }
+}
+
+@utility hairline {
+  border: 1px solid var(--color-line);
+}
+
+@utility card-raise {
+  box-shadow:
+    0 1px 2px rgba(23, 6, 26, 0.04),
+    0 8px 24px -12px rgba(23, 6, 26, 0.12);
+}
+
+@utility card-float {
+  box-shadow:
+    0 1px 2px rgba(23, 6, 26, 0.05),
+    0 20px 50px -24px rgba(23, 6, 26, 0.28);
+}
+
+/* The light canvas product fragments float on — a field, not a box. */
+@utility dot-canvas {
+  background-image: radial-gradient(
+    circle at center,
+    rgba(22, 18, 27, 0.13) 1px,
+    transparent 1px
+  );
+  background-size: 22px 22px;
+}
+
+/* Fine grid used behind dark data panels */
+@utility grid-veil {
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+
+@utility marquee-mask {
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 8%,
+    #000 92%,
+    transparent
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 8%,
+    #000 92%,
+    transparent
+  );
+}
+
+/* ------------------------------------------------------------------
+   Keyframes
+------------------------------------------------------------------- */
+
+@keyframes noeud-marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.animate-marquee {
+  animation: noeud-marquee 42s linear infinite;
+}
+
+@keyframes noeud-pulse-ring {
+  0% {
+    transform: scale(0.6);
+    opacity: 0.55;
+  }
+  70% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee {
+    animation: none;
+  }
 }
