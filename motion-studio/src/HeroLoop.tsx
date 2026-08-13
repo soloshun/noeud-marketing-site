@@ -1,35 +1,41 @@
 import React from "react";
-import {
-  AbsoluteFill,
-  interpolate,
-  useCurrentFrame,
-  useVideoConfig,
-} from "remotion";
-import { C, MARKS, display, mono, seeded } from "./theme";
+import { AbsoluteFill, interpolate, useCurrentFrame, useVideoConfig } from "remotion";
+import { display, mono, seeded } from "./theme";
 import { clamp } from "./ui";
 
 /**
- * The hero band: a calm, continuously running product shot.
+ * The hero band: the NOEUD application, running.
  *
- * Every animation inside completes a whole number of cycles across the
- * composition, and anything with a visible start/end state fades through the
- * boundary — so frame 0 and the final frame are identical and the video loops
- * without a seam. No entrances, no springs: enterprise software at rest, doing
- * its job.
+ * Light ground, hairline borders, real chrome — it should read as a product
+ * screenshot that happens to be alive, not as a motion-graphics piece.
+ *
+ * Every cycle divides the duration exactly and anything with a visible start
+ * state fades through the boundary, so the last frame matches the first.
  */
 
-export const HERO_DURATION = 420; // 14s at 30fps
+export const HERO_DURATION = 480; // 16s at 30fps
+const TAU = Math.PI * 2;
 
-/* ---------------- geometry ---------------- */
+/* --- palette: the site's light tokens --- */
+const P = {
+  paper: "#ffffff",
+  soft: "#f8f8fa",
+  mist: "#eef0f5",
+  ink: "#16121b",
+  inkSoft: "#55505e",
+  inkFaint: "#857f8f",
+  line: "#e7e4ec",
+  plum: "#4a1039",
+  plum700: "#642353",
+  azure: "#4a8fd4",
+  azureSoft: "#e8f1fb",
+  flag: "#d1453b",
+  verdant: "#17795a",
+};
 
-const W = 2560;
-const H = 1120;
-
-const CHART_W = 1180;
-const CHART_H = 420;
-const LO = Math.min(...MARKS) - 0.06;
-const HI = Math.max(...MARKS) + 0.06;
-
+/* --- chart --- */
+const CW = 700;
+const CH = 210;
 const SERIES = (() => {
   const rnd = seeded(20260812);
   const out: number[] = [];
@@ -40,411 +46,406 @@ const SERIES = (() => {
   }
   return out;
 })();
+const LO = Math.min(...SERIES);
+const HI = Math.max(...SERIES);
+const cx = (i: number) => (i / (SERIES.length - 1)) * CW;
+const cy = (v: number) => CH - 24 - ((v - LO) / (HI - LO)) * (CH - 54);
+const LINE = SERIES.map((v, i) => `${i ? "L" : "M"} ${cx(i).toFixed(1)} ${cy(v).toFixed(1)}`).join(" ");
+const AREA = `${LINE} L ${CW} ${CH - 24} L 0 ${CH - 24} Z`;
 
-const S_LO = Math.min(...SERIES);
-const S_HI = Math.max(...SERIES);
-const cx = (i: number) => (i / (SERIES.length - 1)) * CHART_W;
-const cy = (v: number) =>
-  CHART_H - 34 - ((v - S_LO) / (S_HI - S_LO)) * (CHART_H - 70);
+/* --- the exposure book --- */
+const BOOK = [
+  { ref: "CO-4471", who: "Cocoa · Tema", usd: 240000, days: 47, cyc: 1, ph: 0.0 },
+  { ref: "CA-2210", who: "Cashew · Takoradi", usd: 128500, days: 21, cyc: 2, ph: 0.3 },
+  { ref: "GO-3318", who: "Gold · Accra", usd: 310000, days: 34, cyc: 1, ph: 0.55 },
+  { ref: "SH-1907", who: "Shea · Tamale", usd: 96000, days: 63, cyc: 3, ph: 0.12 },
+  { ref: "SV-5502", who: "Services · Accra", usd: 54200, days: 12, cyc: 2, ph: 0.78 },
+  { ref: "TB-8820", who: "Timber · Sekondi", usd: 172400, days: 29, cyc: 1, ph: 0.41 },
+  { ref: "AL-6104", who: "Aluminium · Tema", usd: 88700, days: 55, cyc: 3, ph: 0.66 },
+  { ref: "RB-2277", who: "Rubber · Axim", usd: 143900, days: 18, cyc: 2, ph: 0.09 },
+];
 
-const LINE = (() => {
-  const pts = SERIES.map((v, i) => [cx(i), cy(v)] as const);
-  let d = `M ${pts[0][0].toFixed(1)} ${pts[0][1].toFixed(1)}`;
-  for (let i = 0; i < pts.length - 1; i++) {
-    const p0 = pts[i === 0 ? 0 : i - 1];
-    const p1 = pts[i];
-    const p2 = pts[i + 1];
-    const p3 = pts[Math.min(pts.length - 1, i + 2)];
-    d += ` C ${(p1[0] + (p2[0] - p0[0]) / 6).toFixed(1)} ${(p1[1] + (p2[1] - p0[1]) / 6).toFixed(1)}, ${(p2[0] - (p3[0] - p1[0]) / 6).toFixed(1)} ${(p2[1] - (p3[1] - p1[1]) / 6).toFixed(1)}, ${p2[0].toFixed(1)} ${p2[1].toFixed(1)}`;
-  }
-  return d;
-})();
+/* --- the quote board --- */
+const DEALERS = [
+  { label: "Dealer 01", cyc: 2, ph: 0.0 },
+  { label: "Dealer 02", cyc: 3, ph: 0.31 },
+  { label: "Dealer 03", cyc: 1, ph: 0.62 },
+  { label: "Dealer 04", cyc: 4, ph: 0.18 },
+  { label: "Dealer 05", cyc: 2, ph: 0.74 },
+];
+const rateOf = (d: { cyc: number; ph: number }, t: number) =>
+  12.94 + 0.13 * (0.5 + 0.5 * Math.sin(TAU * (d.cyc * t + d.ph)));
 
-const AREA = `${LINE} L ${CHART_W} ${CHART_H - 34} L 0 ${CHART_H - 34} Z`;
+/** Fractional "how many price better than me", so rows glide rather than snap. */
+const softRank = (rates: number[], i: number, eps = 0.0012) =>
+  rates.reduce((a, r, j) => (j === i ? a : a + 1 / (1 + Math.exp((rates[i] - r) / eps))), 0);
 
-/* ---------------- data that cycles ---------------- */
+const money = (n: number) => n.toLocaleString("en-US");
 
-const RATE_STEPS = 14; // whole number of ticks across the loop
-const rateAt = (step: number) => {
-  const rnd = seeded(5150 + step * 31);
-  return 13.0 + rnd() * 0.06;
-};
-
-const QUOTE_CYCLES = 3;
-const DEALERS = ["Dealer 01", "Dealer 02", "Dealer 03", "Dealer 04", "Dealer 05"];
-const quotesAt = (cycle: number) => {
-  const rnd = seeded(4200 + (cycle % QUOTE_CYCLES) * 97);
-  return DEALERS.map((label) => ({ label, rate: 12.86 + rnd() * 0.19 }));
-};
-
-/* ---------------- pieces ---------------- */
-
-const Card: React.FC<{
-  children: React.ReactNode;
-  style?: React.CSSProperties;
-}> = ({ children, style }) => (
-  <div
-    style={{
-      backgroundColor: "rgba(255,255,255,0.045)",
-      border: "1px solid rgba(255,255,255,0.10)",
-      borderRadius: 26,
-      padding: 40,
-      ...style,
-    }}
-  >
-    {children}
-  </div>
-);
-
-const Label: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <p
-    style={{
-      fontFamily: mono,
-      fontSize: 19,
-      letterSpacing: 4,
-      textTransform: "uppercase",
-      color: "rgba(255,255,255,0.40)",
-      margin: 0,
-    }}
-  >
-    {children}
-  </p>
-);
-
-/* ---------------- composition ---------------- */
+const NAV = ["Mark", "Profile", "Route", "Witness", "Patterns"];
+const ROW_H = 64;
 
 export const HeroLoop: React.FC = () => {
   const frame = useCurrentFrame();
   const { durationInFrames } = useVideoConfig();
-  const t = frame / durationInFrames; // 0 → 1
+  const t = frame / durationInFrames;
 
-  // Rate: steps through whole cycles and lands back on its opening value.
-  const step = Math.floor(t * RATE_STEPS) % RATE_STEPS;
-  const rate = rateAt(step);
-  const prev = rateAt((step - 1 + RATE_STEPS) % RATE_STEPS);
-  const up = rate >= prev;
+  const mid = 13.02 + 0.05 * Math.sin(TAU * (2 * t));
+  const prevMid = 13.02 + 0.05 * Math.sin(TAU * (2 * (t - 1 / durationInFrames)));
+  const up = mid >= prevMid;
 
-  // Quote board: exactly QUOTE_CYCLES passes across the loop.
-  const cycle = Math.floor(t * RATE_STEPS * (QUOTE_CYCLES / RATE_STEPS));
-  const quotes = quotesAt(Math.floor(t * QUOTE_CYCLES));
-  const bestRate = Math.max(...quotes.map((q) => q.rate));
+  const rates = DEALERS.map((d) => rateOf(d, t));
+  const best = Math.max(...rates);
 
-  // Tracer: one pass, fading through the loop boundary so there is no jump.
-  const tracerX = t * CHART_W;
+  const tracerX = t * CW;
   const tracerV = SERIES[Math.min(SERIES.length - 1, Math.floor(t * SERIES.length))];
-  const tracerY = cy(tracerV);
-  const tracerOpacity = interpolate(
-    t,
-    [0, 0.06, 0.94, 1],
-    [0, 1, 1, 0],
-    clamp,
-  );
+  const tracerOp = interpolate(t, [0, 0.05, 0.95, 1], [0, 1, 1, 0], clamp);
 
   return (
-    <AbsoluteFill style={{ backgroundColor: C.plum950 }}>
-      <AbsoluteFill
+    <AbsoluteFill style={{ backgroundColor: P.mist, padding: 56 }}>
+      {/* the application window */}
+      <div
         style={{
-          backgroundImage:
-            "linear-gradient(to right, rgba(255,255,255,0.035) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.035) 1px, transparent 1px)",
-          backgroundSize: "90px 90px",
-        }}
-      />
-      <AbsoluteFill
-        style={{
-          background:
-            "radial-gradient(1400px 800px at 20% -20%, rgba(155,215,240,0.13), transparent 62%), radial-gradient(1100px 700px at 100% 120%, rgba(74,16,57,0.85), transparent 60%)",
-        }}
-      />
-
-      <AbsoluteFill
-        style={{
-          padding: "78px 96px",
+          flex: 1,
           display: "flex",
-          flexDirection: "column",
-          gap: 34,
+          backgroundColor: P.paper,
+          borderRadius: 22,
+          border: `1px solid ${P.line}`,
+          overflow: "hidden",
+          boxShadow: "0 40px 90px -40px rgba(23,6,26,0.28)",
         }}
       >
-        {/* chrome */}
+        {/* ---- rail ---- */}
         <div
           style={{
+            width: 290,
+            borderRight: `1px solid ${P.line}`,
+            backgroundColor: P.soft,
+            padding: "30px 22px",
             display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
+            flexDirection: "column",
+            gap: 30,
           }}
         >
-          <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
-            <div
+          <div style={{ display: "flex", alignItems: "baseline", paddingLeft: 10 }}>
+            <span
               style={{
-                width: 11,
-                height: 11,
-                borderRadius: 999,
-                backgroundColor: C.sky300,
+                fontFamily: display,
+                fontWeight: 700,
+                fontSize: 27,
+                letterSpacing: -1.2,
+                color: P.plum,
               }}
-            />
-            <Label>noeud · live</Label>
+            >
+              noeud
+            </span>
+            <span style={{ fontFamily: display, fontWeight: 700, fontSize: 27, color: P.azure }}>
+              ;
+            </span>
           </div>
-          <Label>Accra · Tema · USD / GHS</Label>
-        </div>
 
-        <div style={{ display: "flex", gap: 26, flex: 1 }}>
-          {/* ---- chart ---- */}
-          <Card style={{ flex: 1.55, display: "flex", flexDirection: "column" }}>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "flex-start",
-              }}
-            >
-              <div>
-                <Label>Mark · cedi commercial midrate · 90 days</Label>
-                <p
-                  style={{
-                    fontFamily: display,
-                    fontWeight: 900,
-                    fontSize: 46,
-                    letterSpacing: -1.6,
-                    color: C.white,
-                    margin: "16px 0 0",
-                  }}
-                >
-                  Every open invoice, valued now
-                </p>
-              </div>
-              <div style={{ textAlign: "right" }}>
-                <p
-                  style={{
-                    fontFamily: mono,
-                    fontSize: 54,
-                    color: C.white,
-                    margin: 0,
-                    lineHeight: 1,
-                  }}
-                >
-                  {rate.toFixed(4)}
-                </p>
-                <p
-                  style={{
-                    fontFamily: mono,
-                    fontSize: 20,
-                    letterSpacing: 3,
-                    color: up ? C.flagSoft : C.sky300,
-                    margin: "12px 0 0",
-                  }}
-                >
-                  {up ? "▲" : "▼"} USD/GHS
-                </p>
-              </div>
-            </div>
-
-            <svg
-              viewBox={`0 0 ${CHART_W} ${CHART_H}`}
-              width="100%"
-              style={{ marginTop: 30, flex: 1 }}
-              preserveAspectRatio="none"
-            >
-              <defs>
-                <linearGradient id="hero-area" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor={C.sky300} stopOpacity="0.20" />
-                  <stop offset="100%" stopColor={C.sky300} stopOpacity="0" />
-                </linearGradient>
-              </defs>
-
-              {[0, 0.5, 1].map((g) => (
-                <line
-                  key={g}
-                  x1="0"
-                  x2={CHART_W}
-                  y1={34 + g * (CHART_H - 68)}
-                  y2={34 + g * (CHART_H - 68)}
-                  stroke="rgba(255,255,255,0.07)"
-                  strokeWidth="1.5"
-                />
-              ))}
-
-              <path d={AREA} fill="url(#hero-area)" />
-              <path
-                d={LINE}
-                fill="none"
-                stroke={C.sky200}
-                strokeWidth="3.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-
-              <g opacity={tracerOpacity}>
-                <line
-                  x1={tracerX}
-                  x2={tracerX}
-                  y1="10"
-                  y2={CHART_H - 20}
-                  stroke="rgba(255,255,255,0.18)"
-                  strokeWidth="2"
-                />
-                <circle cx={tracerX} cy={tracerY} r="16" fill={C.sky300} opacity="0.2" />
-                <circle cx={tracerX} cy={tracerY} r="6.5" fill={C.white} />
-              </g>
-            </svg>
-
-            <div
-              style={{
-                display: "flex",
-                borderTop: "1px solid rgba(255,255,255,0.10)",
-                paddingTop: 26,
-                marginTop: 20,
-              }}
-            >
-              {[
-                ["Invoices marked", "1,204"],
-                ["Open exposure", "GHS 96M"],
-                ["Avg. window", "38 days"],
-              ].map(([k, v], i) => (
+          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+            {NAV.map((item, i) => {
+              const active = i === 0;
+              return (
                 <div
-                  key={k}
+                  key={item}
                   style={{
-                    flex: 1,
-                    paddingLeft: i ? 40 : 0,
-                    borderLeft: i
-                      ? "1px solid rgba(255,255,255,0.10)"
-                      : undefined,
+                    padding: "13px 14px",
+                    borderRadius: 10,
+                    backgroundColor: active ? P.paper : "transparent",
+                    border: `1px solid ${active ? P.line : "transparent"}`,
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 12,
                   }}
                 >
-                  <p
+                  <span
                     style={{
-                      fontFamily: mono,
-                      fontSize: 16,
-                      letterSpacing: 3,
-                      textTransform: "uppercase",
-                      color: "rgba(255,255,255,0.38)",
-                      margin: 0,
+                      width: 7,
+                      height: 7,
+                      borderRadius: 999,
+                      backgroundColor: active ? P.azure : P.line,
+                    }}
+                  />
+                  <span
+                    style={{
+                      fontFamily: display,
+                      fontWeight: active ? 700 : 500,
+                      fontSize: 19,
+                      color: active ? P.ink : P.inkFaint,
                     }}
                   >
-                    {k}
-                  </p>
-                  <p
-                    style={{
-                      fontFamily: mono,
-                      fontSize: 30,
-                      color: C.white,
-                      margin: "12px 0 0",
-                    }}
-                  >
-                    {v}
-                  </p>
+                    {item}
+                  </span>
                 </div>
-              ))}
-            </div>
-          </Card>
+              );
+            })}
+          </div>
 
-          {/* ---- right column ---- */}
           <div
             style={{
-              flex: 1,
-              display: "flex",
-              flexDirection: "column",
-              gap: 26,
+              marginTop: "auto",
+              padding: 18,
+              borderRadius: 12,
+              border: `1px solid ${P.line}`,
+              backgroundColor: P.paper,
             }}
           >
-            <Card style={{ flex: 1 }}>
+            <p style={{ fontFamily: mono, fontSize: 13, letterSpacing: 2, textTransform: "uppercase", color: P.inkFaint, margin: 0 }}>
+              Open exposure
+            </p>
+            <p style={{ fontFamily: mono, fontSize: 26, color: P.ink, margin: "10px 0 0" }}>
+              GHS 96M
+            </p>
+          </div>
+        </div>
+
+        {/* ---- main ---- */}
+        <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+          {/* top bar */}
+          <div
+            style={{
+              height: 74,
+              borderBottom: `1px solid ${P.line}`,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              padding: "0 32px",
+            }}
+          >
+            <span style={{ fontFamily: display, fontWeight: 700, fontSize: 22, color: P.ink }}>
+              Exposure book
+            </span>
+            <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+              <span
+                style={{
+                  fontFamily: mono,
+                  fontSize: 14,
+                  letterSpacing: 2,
+                  textTransform: "uppercase",
+                  color: P.verdant,
+                  backgroundColor: "#e8f5f0",
+                  borderRadius: 999,
+                  padding: "8px 16px",
+                }}
+              >
+                ● Live
+              </span>
+              <span
+                style={{
+                  width: 36,
+                  height: 36,
+                  borderRadius: 999,
+                  backgroundColor: P.plum,
+                  color: "#fff",
+                  fontFamily: display,
+                  fontWeight: 700,
+                  fontSize: 15,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                DA
+              </span>
+            </div>
+          </div>
+
+          <div style={{ flex: 1, display: "flex", padding: 32, gap: 26 }}>
+            {/* table */}
+            <div style={{ flex: 1.35, display: "flex", flexDirection: "column" }}>
               <div
                 style={{
                   display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
+                  padding: "0 18px 14px",
+                  borderBottom: `1px solid ${P.line}`,
                 }}
               >
-                <Label>Route · $500,000</Label>
+                {["Invoice", "Counterparty", "Amount", "Settles", "Marked in cedis"].map(
+                  (h, i) => (
+                    <span
+                      key={h}
+                      style={{
+                        flex: i === 1 ? 1.3 : i === 4 ? 1.2 : 1,
+                        fontFamily: mono,
+                        fontSize: 13,
+                        letterSpacing: 2,
+                        textTransform: "uppercase",
+                        color: P.inkFaint,
+                        textAlign: i >= 2 ? "right" : "left",
+                      }}
+                    >
+                      {h}
+                    </span>
+                  ),
+                )}
+              </div>
+
+              <div style={{ position: "relative", marginTop: 6 }}>
+                {BOOK.map((row, i) => {
+                  // each invoice re-marks on its own cycle; the flash fades out
+                  const pulse = 0.5 + 0.5 * Math.sin(TAU * (row.cyc * t + row.ph));
+                  const marked = row.usd * (mid + 0.06 * Math.sin(TAU * (row.cyc * t + row.ph)));
+                  return (
+                    <div
+                      key={row.ref}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        height: ROW_H,
+                        padding: "0 18px",
+                        borderRadius: 10,
+                        backgroundColor: `rgba(74,143,212,${0.07 * pulse})`,
+                        borderBottom: i === BOOK.length - 1 ? "none" : `1px solid ${P.line}`,
+                      }}
+                    >
+                      <span style={{ flex: 1, fontFamily: mono, fontSize: 17, color: P.inkSoft }}>
+                        {row.ref}
+                      </span>
+                      <span style={{ flex: 1.3, fontFamily: display, fontWeight: 500, fontSize: 17, color: P.ink }}>
+                        {row.who}
+                      </span>
+                      <span style={{ flex: 1, fontFamily: mono, fontSize: 17, color: P.inkSoft, textAlign: "right" }}>
+                        ${money(row.usd)}
+                      </span>
+                      <span style={{ flex: 1, fontFamily: mono, fontSize: 17, color: P.inkFaint, textAlign: "right" }}>
+                        {row.days}d
+                      </span>
+                      <span
+                        style={{
+                          flex: 1.2,
+                          fontFamily: mono,
+                          fontSize: 18,
+                          color: P.ink,
+                          textAlign: "right",
+                        }}
+                      >
+                        {money(Math.round(marked))}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* chart */}
+              <div
+                style={{
+                  marginTop: "auto",
+                  paddingTop: 22,
+                  borderTop: `1px solid ${P.line}`,
+                }}
+              >
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+                  <span style={{ fontFamily: mono, fontSize: 13, letterSpacing: 2, textTransform: "uppercase", color: P.inkFaint }}>
+                    Cedi commercial midrate · 90 days
+                  </span>
+                  <span style={{ fontFamily: mono, fontSize: 15, color: up ? P.flag : P.verdant }}>
+                    {up ? "▲" : "▼"} {mid.toFixed(4)}
+                  </span>
+                </div>
+                <svg viewBox={`0 0 ${CW} ${CH}`} width="100%" height={190} preserveAspectRatio="none" style={{ marginTop: 12 }}>
+                  <defs>
+                    <linearGradient id="hero-a" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor={P.plum700} stopOpacity="0.14" />
+                      <stop offset="100%" stopColor={P.plum700} stopOpacity="0" />
+                    </linearGradient>
+                  </defs>
+                  <path d={AREA} fill="url(#hero-a)" />
+                  <path d={LINE} fill="none" stroke={P.plum700} strokeWidth="2.5" strokeLinejoin="round" />
+                  <g opacity={tracerOp}>
+                    <line x1={tracerX} x2={tracerX} y1="6" y2={CH - 18} stroke={P.line} strokeWidth="2" />
+                    <circle cx={tracerX} cy={cy(tracerV)} r="6" fill={P.plum700} stroke="#fff" strokeWidth="2.5" />
+                  </g>
+                </svg>
+              </div>
+            </div>
+
+            {/* route panel */}
+            <div
+              style={{
+                flex: 1,
+                border: `1px solid ${P.line}`,
+                borderRadius: 16,
+                padding: 24,
+                backgroundColor: P.soft,
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <span style={{ fontFamily: display, fontWeight: 700, fontSize: 19, color: P.ink }}>
+                  Route · $500,000
+                </span>
                 <span
                   style={{
                     fontFamily: mono,
-                    fontSize: 15,
-                    letterSpacing: 3,
+                    fontSize: 12,
+                    letterSpacing: 2,
                     textTransform: "uppercase",
-                    color: C.sky200,
-                    border: `1px solid ${C.sky300}44`,
-                    backgroundColor: `${C.sky300}14`,
+                    color: P.azure,
+                    backgroundColor: P.azureSoft,
                     borderRadius: 999,
-                    padding: "8px 18px",
+                    padding: "7px 14px",
                   }}
                 >
                   Bidding
                 </span>
               </div>
 
-              <div style={{ marginTop: 26 }}>
-                {quotes.map((q) => {
-                  const best = q.rate === bestRate;
+              <div style={{ position: "relative", height: ROW_H * DEALERS.length, marginTop: 18 }}>
+                {DEALERS.map((d, i) => {
+                  const rate = rates[i];
+                  const y = softRank(rates, i) * ROW_H;
+                  const win = 1 / (1 + Math.exp((best - rate) / 0.0012));
                   return (
                     <div
-                      key={q.label}
+                      key={d.label}
                       style={{
+                        position: "absolute",
+                        left: 0,
+                        right: 0,
+                        top: 0,
+                        transform: `translateY(${y}px)`,
+                        height: ROW_H - 8,
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "space-between",
-                        padding: "18px 22px",
-                        marginBottom: 10,
-                        borderRadius: 14,
-                        border: `1px solid ${best ? `${C.sky300}55` : "rgba(255,255,255,0.08)"}`,
-                        backgroundColor: best
-                          ? `${C.sky300}12`
-                          : "rgba(255,255,255,0.025)",
+                        padding: "0 16px",
+                        borderRadius: 10,
+                        backgroundColor: P.paper,
+                        border: `1px solid ${win > 0.5 ? P.azure : P.line}`,
+                        boxShadow: `0 ${2 + win * 8}px ${8 + win * 18}px -8px rgba(23,6,26,${0.05 + win * 0.12})`,
                       }}
                     >
-                      <span
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 14,
-                        }}
-                      >
+                      <span style={{ display: "flex", alignItems: "center", gap: 11 }}>
                         <span
                           style={{
-                            width: 8,
-                            height: 8,
+                            width: 7,
+                            height: 7,
                             borderRadius: 999,
-                            backgroundColor: best
-                              ? C.sky300
-                              : "rgba(255,255,255,0.22)",
+                            backgroundColor: win > 0.5 ? P.azure : P.line,
                           }}
                         />
-                        <span
-                          style={{
-                            fontFamily: mono,
-                            fontSize: 22,
-                            color: "rgba(255,255,255,0.66)",
-                          }}
-                        >
-                          {q.label}
+                        <span style={{ fontFamily: mono, fontSize: 17, color: P.inkSoft }}>
+                          {d.label}
                         </span>
                       </span>
-                      <span
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 16,
-                        }}
-                      >
-                        {best && (
-                          <span
-                            style={{
-                              fontFamily: mono,
-                              fontSize: 14,
-                              letterSpacing: 2.5,
-                              textTransform: "uppercase",
-                              color: C.sky200,
-                            }}
-                          >
-                            Best
-                          </span>
-                        )}
+                      <span style={{ display: "flex", alignItems: "center", gap: 12 }}>
                         <span
                           style={{
                             fontFamily: mono,
-                            fontSize: 23,
-                            color: best ? C.white : "rgba(255,255,255,0.45)",
+                            fontSize: 11,
+                            letterSpacing: 2,
+                            textTransform: "uppercase",
+                            color: P.azure,
+                            opacity: win,
                           }}
                         >
-                          {q.rate.toFixed(4)}
+                          Best
+                        </span>
+                        <span style={{ fontFamily: mono, fontSize: 18, color: P.ink }}>
+                          {rate.toFixed(4)}
                         </span>
                       </span>
                     </div>
@@ -454,77 +455,23 @@ export const HeroLoop: React.FC = () => {
 
               <div
                 style={{
+                  marginTop: "auto",
+                  paddingTop: 18,
+                  borderTop: `1px solid ${P.line}`,
                   display: "flex",
                   justifyContent: "space-between",
                   alignItems: "baseline",
-                  borderTop: "1px solid rgba(255,255,255,0.10)",
-                  paddingTop: 22,
-                  marginTop: 16,
                 }}
               >
-                <Label>Fee, disclosed</Label>
-                <span
-                  style={{ fontFamily: mono, fontSize: 24, color: C.white }}
-                >
-                  7.5 bps
+                <span style={{ fontFamily: mono, fontSize: 13, letterSpacing: 2, textTransform: "uppercase", color: P.inkFaint }}>
+                  Fee, disclosed
                 </span>
+                <span style={{ fontFamily: mono, fontSize: 19, color: P.ink }}>7.5 bps</span>
               </div>
-            </Card>
-
-            <Card
-              style={{
-                backgroundColor: "rgba(155,215,240,0.07)",
-                borderColor: `${C.sky300}33`,
-              }}
-            >
-              <Label>Profile · risk at 99%</Label>
-              <p
-                style={{
-                  fontFamily: display,
-                  fontWeight: 900,
-                  fontSize: 58,
-                  letterSpacing: -2,
-                  color: C.white,
-                  margin: "18px 0 0",
-                  lineHeight: 1,
-                }}
-              >
-                GHS 2.4M
-              </p>
-              <div
-                style={{
-                  marginTop: 26,
-                  height: 8,
-                  borderRadius: 999,
-                  backgroundColor: "rgba(255,255,255,0.10)",
-                  overflow: "hidden",
-                }}
-              >
-                <div
-                  style={{
-                    width: "62%",
-                    height: "100%",
-                    borderRadius: 999,
-                    backgroundColor: C.sky300,
-                  }}
-                />
-              </div>
-              <p
-                style={{
-                  fontFamily: mono,
-                  fontSize: 16,
-                  letterSpacing: 3,
-                  textTransform: "uppercase",
-                  color: "rgba(255,255,255,0.35)",
-                  margin: "16px 0 0",
-                }}
-              >
-                62% of appetite used · cycle {cycle + 1}
-              </p>
-            </Card>
+            </div>
           </div>
         </div>
-      </AbsoluteFill>
+      </div>
     </AbsoluteFill>
   );
 };

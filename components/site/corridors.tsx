@@ -13,26 +13,24 @@ const PAIRS = [
   { pair: "USD / TZS", rate: "2,712.00", delta: "+1.4%", up: true },
 ];
 
-function Row({ ariaHidden }: { ariaHidden?: boolean }) {
+/** One half of the loop. Rendered twice so the translate can wrap seamlessly. */
+function Run({ hidden }: { hidden?: boolean }) {
   return (
-    <div
-      className="flex shrink-0 items-center"
-      aria-hidden={ariaHidden ? "true" : undefined}
-    >
+    <div className="flex shrink-0" aria-hidden={hidden ? "true" : undefined}>
       {PAIRS.map((p) => (
         <div
           key={p.pair}
-          className="flex items-center gap-3 whitespace-nowrap border-r border-line px-7 py-4"
+          className="flex items-baseline gap-2.5 whitespace-nowrap border-r border-line px-7 py-4"
         >
-          <span className="font-mono text-[0.6875rem] uppercase tracking-[0.14em] text-ink-faint">
+          <span className="font-mono text-[0.625rem] uppercase tracking-[0.14em] text-ink-faint">
             {p.pair}
           </span>
-          <span className="tnum font-mono text-[0.875rem] text-ink">
+          <span className="tnum font-mono text-[0.8125rem] text-ink">
             {p.rate}
           </span>
           <span
             className={cn(
-              "tnum font-mono text-[0.75rem]",
+              "tnum font-mono text-[0.6875rem]",
               p.up ? "text-flag" : "text-verdant",
             )}
           >
@@ -46,15 +44,15 @@ function Row({ ariaHidden }: { ariaHidden?: boolean }) {
 
 export function Corridors() {
   return (
-    <section className="border-y border-line bg-paper-soft">
-      <div className="shell flex flex-col gap-5 py-7 lg:flex-row lg:items-center lg:gap-10">
+    <section className="border-y border-line bg-paper">
+      <div className="shell flex flex-col gap-4 py-5 lg:flex-row lg:items-center lg:gap-10">
         <p className="eyebrow shrink-0 text-ink-faint">
           Corridors we price · 12-month move
         </p>
         <div className="marquee-mask relative overflow-hidden">
           <div className="animate-marquee flex w-max">
-            <Row />
-            <Row ariaHidden />
+            <Run />
+            <Run hidden />
           </div>
         </div>
       </div>

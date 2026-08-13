@@ -1,0 +1,5 @@
+# The Remotion studio is a separate local package used to render the films in
+# public/. Its output is committed; its source and deps are not needed to build
+# or deploy the site, and shipping them makes the install fail.
+motion-studio
+docs

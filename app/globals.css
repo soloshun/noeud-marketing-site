@@ -206,39 +206,9 @@ body {
   background-size: 44px 44px;
 }
 
-@utility marquee-mask {
-  mask-image: linear-gradient(
-    to right,
-    transparent,
-    #000 8%,
-    #000 92%,
-    transparent
-  );
-  -webkit-mask-image: linear-gradient(
-    to right,
-    transparent,
-    #000 8%,
-    #000 92%,
-    transparent
-  );
-}
-
 /* ------------------------------------------------------------------
    Keyframes
 ------------------------------------------------------------------- */
-
-@keyframes noeud-marquee {
-  from {
-    transform: translate3d(0, 0, 0);
-  }
-  to {
-    transform: translate3d(-50%, 0, 0);
-  }
-}
-
-.animate-marquee {
-  animation: noeud-marquee 42s linear infinite;
-}
 
 @keyframes noeud-pulse-ring {
   0% {
@@ -253,6 +223,39 @@ body {
     transform: scale(2.4);
     opacity: 0;
   }
+}
+
+
+/* The corridor strip runs continuously — the one piece of ambient motion the
+   page keeps, because a rates ticker that sits still reads as stale data. */
+@utility marquee-mask {
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 6%,
+    #000 94%,
+    transparent
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 6%,
+    #000 94%,
+    transparent
+  );
+}
+
+@keyframes noeud-marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.animate-marquee {
+  animation: noeud-marquee 48s linear infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -1,8 +1,4 @@
-"use client";
-
-import { motion } from "motion/react";
 import { Arrow, ButtonLink } from "@/components/ui/button";
-import { CorridorField } from "@/components/site/corridor-field";
 import { Wordmark } from "@/components/ui/logo";
 import { PHOTO_CREDITS } from "@/lib/photos";
 
@@ -10,19 +6,19 @@ const COLUMNS = [
   {
     heading: "Product",
     links: [
-      ["Mark", "#product"],
-      ["Profile", "#product"],
-      ["Route", "#product"],
-      ["The film", "#product"],
+      ["Mark", "/#product"],
+      ["Profile", "/#product"],
+      ["Route", "/#product"],
+      ["The film", "/#product"],
     ],
   },
   {
     heading: "Company",
     links: [
-      ["The problem", "#the-leak"],
-      ["The pilot", "#lifecycle"],
-      ["For institutions", "#institutions"],
-      ["Fair questions", "#questions"],
+      ["Research", "/blog"],
+      ["The pilot", "/#lifecycle"],
+      ["For institutions", "/#institutions"],
+      ["Fair questions", "/#questions"],
     ],
   },
   {
@@ -31,23 +27,14 @@ const COLUMNS = [
       ["Privacy", "#"],
       ["Terms", "#"],
       ["Disclosures", "#"],
-      ["Contact", "#apply"],
+      ["Contact", "/#apply"],
     ],
   },
 ];
 
-const EASE = [0.16, 1, 0.3, 1] as const;
-
 export function Footer() {
   return (
     <footer className="relative overflow-hidden bg-plum-950 text-white">
-      {/* The corridors keep running under the whole footer. */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -bottom-40 left-1/2 w-[62rem] -translate-x-1/2 opacity-[0.13] sm:-bottom-56 sm:w-[78rem]"
-      >
-        <CorridorField tone="dark" className="h-auto w-full" />
-      </div>
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-sky-300/40 to-transparent"
@@ -55,18 +42,14 @@ export function Footer() {
 
       {/* Closing call */}
       <div className="shell relative pb-16 pt-20 lg:pb-20 lg:pt-28">
-        <motion.div
-          initial={{ opacity: 0, y: 22 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.4 }}
-          transition={{ duration: 0.9, ease: EASE }}
+        <div
           className="flex flex-col gap-8 border-b border-white/12 pb-16 lg:flex-row lg:items-end lg:justify-between lg:pb-20"
         >
           <h2 className="display-lg max-w-[13ch] text-white">
             The rate will move tomorrow, too.
           </h2>
           <div className="shrink-0">
-            <ButtonLink href="#apply" tone="sky" size="lg">
+            <ButtonLink href="/#apply" tone="sky" size="lg">
               Start the free 30-day pilot
               <Arrow />
             </ButtonLink>
@@ -74,7 +57,7 @@ export function Footer() {
               No card · 30 days · your data leaves with you
             </p>
           </div>
-        </motion.div>
+        </div>
 
         {/* Directory */}
         <div className="grid gap-12 pt-14 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1.9fr)] lg:gap-20">

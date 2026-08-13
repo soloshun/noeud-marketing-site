@@ -53,14 +53,7 @@ export function Questions() {
           {QUESTIONS.map(([q, a], i) => {
             const isOpen = open === i;
             return (
-              <motion.div
-                key={q}
-                initial={{ opacity: 0, y: 14 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.6 }}
-                transition={{ duration: 0.6, delay: (i % 3) * 0.06, ease: EASE }}
-                className="border-t border-line last:border-b"
-              >
+              <div key={q} className="border-t border-line last:border-b">
                 <dt>
                   <button
                     type="button"
@@ -104,7 +97,7 @@ export function Questions() {
                     </motion.dd>
                   )}
                 </AnimatePresence>
-              </motion.div>
+              </div>
             );
           })}
         </dl>

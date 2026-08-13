@@ -6,16 +6,17 @@ import {
   useMotionValueEvent,
   useScroll,
 } from "motion/react";
+import Link from "next/link";
 import { useState } from "react";
 import { Arrow, ButtonLink } from "@/components/ui/button";
 import { Wordmark } from "@/components/ui/logo";
 import { cn } from "@/lib/utils";
 
 const LINKS = [
-  { label: "Product", href: "#product" },
-  { label: "Pilot", href: "#lifecycle" },
-  { label: "Pricing", href: "#pricing" },
-  { label: "Questions", href: "#questions" },
+  { label: "Product", href: "/#product" },
+  { label: "Pilot", href: "/#lifecycle" },
+  { label: "Pricing", href: "/#pricing" },
+  { label: "Research", href: "/blog" },
 ];
 
 export function Nav() {
@@ -27,10 +28,7 @@ export function Nav() {
 
   return (
     <>
-      <motion.header
-        initial={{ y: -72, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
+      <header
         className={cn(
           "fixed inset-x-0 top-0 z-50 transition-[background-color,border-color,backdrop-filter] duration-500",
           lifted
@@ -78,22 +76,22 @@ export function Nav() {
             </span>
           </button>
 
-          <a
-            href="#top"
+          <Link
+            href="/"
             className="justify-self-center text-plum-900 transition-opacity hover:opacity-70"
             aria-label="NOEUD home"
           >
             <Wordmark />
-          </a>
+          </Link>
 
           <div className="flex items-center justify-end">
-            <ButtonLink href="#apply" tone="plum" size="sm">
+            <ButtonLink href="/#apply" tone="plum" size="sm">
               Apply for the pilot
               <Arrow />
             </ButtonLink>
           </div>
         </nav>
-      </motion.header>
+      </header>
 
       <AnimatePresence>
         {open && (
@@ -105,25 +103,18 @@ export function Nav() {
             className="fixed inset-0 z-40 bg-paper pt-[4.5rem] md:hidden"
           >
             <div className="shell flex flex-col gap-1 py-8">
-              {LINKS.map((link, i) => (
-                <motion.a
+              {LINKS.map((link) => (
+                <a
                   key={link.href}
                   href={link.href}
                   onClick={() => setOpen(false)}
-                  initial={{ opacity: 0, y: 14 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{
-                    duration: 0.5,
-                    delay: 0.05 + i * 0.05,
-                    ease: [0.16, 1, 0.3, 1],
-                  }}
                   className="display-md border-b border-line-soft py-5 text-plum-900"
                 >
                   {link.label}
-                </motion.a>
+                </a>
               ))}
               <ButtonLink
-                href="#apply"
+                href="/#apply"
                 tone="plum"
                 size="lg"
                 className="mt-8 w-full"

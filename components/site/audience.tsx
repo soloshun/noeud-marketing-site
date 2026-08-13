@@ -8,7 +8,7 @@ import { Reveal } from "@/components/ui/reveal";
 import { PHOTOS, photoUrl } from "@/lib/photos";
 import { cn } from "@/lib/utils";
 
-const EASE = [0.16, 1, 0.3, 1] as const;
+const EASE = [0.22, 1, 0.36, 1] as const;
 
 const ROLES = [
   {
@@ -66,7 +66,7 @@ export function Audience() {
                 {active === i && (
                   <motion.span
                     layoutId="audience-underline"
-                    transition={{ type: "spring", stiffness: 420, damping: 36 }}
+                    transition={{ duration: 0.3, ease: EASE }}
                     className="absolute inset-x-0 bottom-0 h-[2px] rounded-full bg-azure-500"
                   />
                 )}
@@ -79,10 +79,10 @@ export function Audience() {
           <AnimatePresence mode="wait">
             <motion.div
               key={role.id}
-              initial={{ opacity: 0, y: 14 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.45, ease: EASE }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3, ease: EASE }}
             >
               <h2 className="display-lg max-w-[16ch] text-plum-800">
                 {role.title}
@@ -104,10 +104,10 @@ export function Audience() {
             <AnimatePresence mode="popLayout">
               <motion.div
                 key={role.id}
-                initial={{ opacity: 0, scale: 1.06 }}
-                animate={{ opacity: 1, scale: 1 }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                transition={{ duration: 0.7, ease: EASE }}
+                transition={{ duration: 0.35, ease: EASE }}
                 className="absolute inset-0"
               >
                 <Image

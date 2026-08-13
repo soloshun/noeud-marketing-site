@@ -1,11 +1,6 @@
-"use client";
-
-import { motion } from "motion/react";
 import { Arrow, ButtonLink, Eyebrow } from "@/components/ui/button";
 import { Reveal } from "@/components/ui/reveal";
 import { cn } from "@/lib/utils";
-
-const EASE = [0.16, 1, 0.3, 1] as const;
 
 const STEPS = [
   ["01", "Start free.", "A 30-day pilot. No card."],
@@ -62,14 +57,8 @@ export function Pricing() {
         </Reveal>
 
         <div className="mt-12 grid gap-8 border-t border-line pt-8 sm:grid-cols-3 sm:gap-6">
-          {STEPS.map(([n, title, body], i) => (
-            <motion.div
-              key={n}
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.5 }}
-              transition={{ duration: 0.7, delay: i * 0.08, ease: EASE }}
-            >
+          {STEPS.map(([n, title, body]) => (
+            <div key={n}>
               <p className="font-mono text-[0.6875rem] tracking-[0.14em] text-azure-500">
                 {n}
               </p>
@@ -79,18 +68,14 @@ export function Pricing() {
               <p className="mt-1.5 text-[0.875rem] leading-relaxed text-ink-faint">
                 {body}
               </p>
-            </motion.div>
+            </div>
           ))}
         </div>
 
         <div className="mt-10 grid gap-4 lg:grid-cols-3">
-          {TIERS.map((tier, i) => (
-            <motion.div
+          {TIERS.map((tier) => (
+            <div
               key={tier.name}
-              initial={{ opacity: 0, y: 26 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.25 }}
-              transition={{ duration: 0.8, delay: i * 0.09, ease: EASE }}
               className={cn(
                 "flex flex-col rounded-[1.25rem] border bg-paper p-7 sm:p-8",
                 tier.featured
@@ -147,11 +132,11 @@ export function Pricing() {
                 {tier.cta}
                 <Arrow />
               </ButtonLink>
-            </motion.div>
+            </div>
           ))}
         </div>
 
-        <Reveal delay={2}>
+        <Reveal>
           <p className="mt-8 max-w-[78ch] border-t border-line pt-6 text-[0.8125rem] leading-relaxed text-ink-faint">
             <span className="font-medium text-ink-soft">Both sides published:</span>{" "}
             your share of verified savings is capped at 40 bps of trade value.

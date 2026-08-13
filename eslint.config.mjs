@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // The Remotion studio is built and linted on its own, not by the site.
+    "motion-studio/**",
   ]),
 ]);
 

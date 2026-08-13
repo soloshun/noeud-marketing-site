@@ -1,8 +1,17 @@
 import { loadFont as loadDisplay } from "@remotion/google-fonts/InstrumentSans";
 import { loadFont as loadMono } from "@remotion/google-fonts/IBMPlexMono";
 
-export const display = loadDisplay().fontFamily;
-export const mono = loadMono().fontFamily;
+/* Load only what the compositions actually set, otherwise the headless
+   browser spends its whole startup budget fetching font weights. */
+export const display = loadDisplay("normal", {
+  weights: ["400", "700"],
+  subsets: ["latin"],
+}).fontFamily;
+
+export const mono = loadMono("normal", {
+  weights: ["400"],
+  subsets: ["latin"],
+}).fontFamily;
 
 /** Identical to the site's tokens — the film has to feel like the same object. */
 export const C = {

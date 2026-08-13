@@ -1,11 +1,5 @@
-"use client";
-
-import { motion, useScroll, useSpring } from "motion/react";
-import { useRef } from "react";
 import { Eyebrow } from "@/components/ui/button";
 import { Reveal } from "@/components/ui/reveal";
-
-const EASE = [0.16, 1, 0.3, 1] as const;
 
 const STAGES = [
   {
@@ -29,17 +23,6 @@ const STAGES = [
 ];
 
 export function Lifecycle() {
-  const track = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: track,
-    offset: ["start 80%", "end 70%"],
-  });
-  const fill = useSpring(scrollYProgress, {
-    stiffness: 120,
-    damping: 30,
-    mass: 0.4,
-  });
-
   return (
     <section
       id="lifecycle"
@@ -53,21 +36,13 @@ export function Lifecycle() {
           </h2>
         </Reveal>
 
-        <div ref={track} className="relative mt-14">
+        <div className="relative mt-14">
           <div className="absolute inset-x-0 top-0 h-px bg-line" />
-          <motion.div
-            style={{ scaleX: fill }}
-            className="absolute inset-x-0 top-0 h-px origin-left bg-azure-500"
-          />
 
           <div className="grid gap-10 pt-8 sm:grid-cols-3 sm:gap-8 lg:gap-14">
-            {STAGES.map((s, i) => (
-              <motion.div
+            {STAGES.map((s) => (
+              <div
                 key={s.n}
-                initial={{ opacity: 0, y: 22 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.4 }}
-                transition={{ duration: 0.75, delay: i * 0.1, ease: EASE }}
                 className="sm:border-l sm:border-line sm:pl-6 sm:first:border-l-0 sm:first:pl-0"
               >
                 <p className="flex items-baseline gap-3">
@@ -82,7 +57,7 @@ export function Lifecycle() {
                 <p className="mt-3 max-w-[36ch] text-[0.9375rem] leading-relaxed text-ink-soft">
                   {s.body}
                 </p>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>

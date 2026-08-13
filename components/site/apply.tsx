@@ -5,8 +5,9 @@ import { Check } from "lucide-react";
 import { useState, type FormEvent } from "react";
 import { Arrow, Button, Eyebrow } from "@/components/ui/button";
 import { Reveal } from "@/components/ui/reveal";
+import { Select } from "@/components/ui/select";
 
-const EASE = [0.16, 1, 0.3, 1] as const;
+const EASE = [0.22, 1, 0.36, 1] as const;
 
 const ASSURANCES = [
   "Free for 30 days — at day 30, you decide",
@@ -57,7 +58,7 @@ export function Apply() {
           </ul>
         </Reveal>
 
-        <Reveal delay={1}>
+        <Reveal>
           <div className="rounded-[1.5rem] border border-line bg-paper p-6 card-raise sm:p-9">
             <AnimatePresence mode="wait">
               {sent ? (
@@ -68,19 +69,9 @@ export function Apply() {
                   transition={{ duration: 0.6, ease: EASE }}
                   className="flex min-h-[26rem] flex-col items-center justify-center text-center"
                 >
-                  <motion.span
-                    initial={{ scale: 0.5, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    transition={{
-                      type: "spring",
-                      stiffness: 320,
-                      damping: 20,
-                      delay: 0.1,
-                    }}
-                    className="flex h-14 w-14 items-center justify-center rounded-full bg-plum-800 text-white"
-                  >
+                  <span className="flex h-14 w-14 items-center justify-center rounded-full bg-plum-800 text-white">
                     <Check size={24} strokeWidth={2.4} />
-                  </motion.span>
+                  </span>
                   <h3 className="display-sm mt-6 text-plum-800">
                     Your pilot request is in.
                   </h3>
@@ -159,43 +150,43 @@ export function Apply() {
                     />
                   </div>
                   <div>
-                    <label htmlFor="trade" className={label}>
-                      Trade type
-                    </label>
-                    <select id="trade" name="trade" className={`${field} mt-2`}>
-                      <option>Both</option>
-                      <option>Exporter</option>
-                      <option>Importer</option>
-                    </select>
+                    <p className={label}>Trade type</p>
+                    <div className="mt-2">
+                      <Select
+                        name="trade"
+                        label="Trade type"
+                        options={["Both", "Exporter", "Importer"]}
+                      />
+                    </div>
                   </div>
                   <div>
-                    <label htmlFor="volume" className={label}>
-                      Annual FX volume
-                    </label>
-                    <select
-                      id="volume"
-                      name="volume"
-                      className={`${field} mt-2`}
-                    >
-                      <option>Under $1M</option>
-                      <option>$1M — $2M</option>
-                      <option>$2.1M — $6M</option>
-                      <option>Above $6M</option>
-                    </select>
+                    <p className={label}>Annual FX volume</p>
+                    <div className="mt-2">
+                      <Select
+                        name="volume"
+                        label="Annual FX volume"
+                        options={[
+                          "Under $1M",
+                          "$1M — $2M",
+                          "$2.1M — $6M",
+                          "Above $6M",
+                        ]}
+                      />
+                    </div>
                   </div>
                   <div>
-                    <label htmlFor="interest" className={label}>
-                      Pricing interest
-                    </label>
-                    <select
-                      id="interest"
-                      name="interest"
-                      className={`${field} mt-2`}
-                    >
-                      <option>Not sure yet</option>
-                      <option>Pay as you trade</option>
-                      <option>Flat monthly</option>
-                    </select>
+                    <p className={label}>Pricing interest</p>
+                    <div className="mt-2">
+                      <Select
+                        name="interest"
+                        label="Pricing interest"
+                        options={[
+                          "Not sure yet",
+                          "Share of savings",
+                          "Flat monthly minimum",
+                        ]}
+                      />
+                    </div>
                   </div>
 
                   <div className="sm:col-span-2">

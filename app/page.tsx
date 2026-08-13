@@ -6,7 +6,6 @@ import { Footer } from "@/components/site/footer";
 import { Founder } from "@/components/site/founder";
 import { Hero } from "@/components/site/hero";
 import { Institutions } from "@/components/site/institutions";
-import { Leak } from "@/components/site/leak";
 import { Lifecycle } from "@/components/site/lifecycle";
 import { Nav } from "@/components/site/nav";
 import { Pricing } from "@/components/site/pricing";
@@ -21,7 +20,6 @@ export default function Home() {
       <main className="flex-1">
         <Hero />
         <Corridors />
-        <Leak />
         <Audience />
         <Trade />
         <Surfaces />

@@ -1,12 +1,6 @@
-"use client";
-
-import { motion } from "motion/react";
 import { Arrow, ButtonLink, Eyebrow } from "@/components/ui/button";
-import { Counter } from "@/components/ui/counter";
 import { Reveal } from "@/components/ui/reveal";
 import { CorridorField } from "@/components/site/corridor-field";
-
-const EASE = [0.16, 1, 0.3, 1] as const;
 
 const SPEC = [
   ["Contributing banks", "11"],
@@ -52,35 +46,28 @@ export function Institutions() {
             </p>
 
             <dl className="mt-12 grid gap-x-10 gap-y-7 sm:grid-cols-2">
-              {AUDIENCE.map(([k, v], i) => (
-                <motion.div
-                  key={k}
-                  initial={{ opacity: 0, y: 16 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.4 }}
-                  transition={{ duration: 0.7, delay: i * 0.08, ease: EASE }}
-                  className="border-t border-white/12 pt-4"
-                >
+              {AUDIENCE.map(([k, v]) => (
+                <div key={k} className="border-t border-white/12 pt-4">
                   <dt className="font-display text-[1.0625rem] font-semibold text-white">
                     {k}
                   </dt>
                   <dd className="mt-2 text-[0.875rem] leading-relaxed text-white/50">
                     {v}
                   </dd>
-                </motion.div>
+                </div>
               ))}
             </dl>
           </Reveal>
 
           {/* The rate card */}
-          <Reveal delay={1}>
+          <Reveal>
             <div className="rounded-[1.25rem] border border-white/12 bg-white/[0.055] p-6 backdrop-blur sm:p-7">
               <p className="font-mono text-[0.625rem] uppercase tracking-[0.16em] text-white/45">
                 Witness reference rate
               </p>
               <p className="mt-3 flex items-baseline gap-2">
                 <span className="tnum font-display text-[3.5rem] font-bold leading-none tracking-[-0.04em] text-white">
-                  <Counter value={12.61} decimals={2} group={false} />
+                  12.61
                 </span>
                 <span className="font-mono text-[0.8125rem] text-white/45">
                   GHS / USD
@@ -139,7 +126,7 @@ export function Institutions() {
               ].map((stat) => (
                 <div key={stat.label} className="border-t border-white/12 pt-4">
                   <p className="font-display text-[2rem] font-bold leading-none tracking-[-0.03em] text-sky-200">
-                    <Counter value={stat.v} suffix={stat.s} />
+                    {stat.v}{stat.s}
                   </p>
                   <p className="mt-2 text-[0.75rem] leading-relaxed text-white/45">
                     {stat.label}
