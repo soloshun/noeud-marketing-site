@@ -5,6 +5,8 @@
  */
 export type Post = {
   slug: string;
+  /** Key into PHOTOS — the thumbnail on the index. */
+  thumb: "accraMarket" | "exportYard" | "importBerth";
   title: string;
   dek: string;
   tag: string;
@@ -16,6 +18,7 @@ export type Post = {
 export const POSTS: Post[] = [
   {
     slug: "what-a-commercial-midrate-is",
+    thumb: "accraMarket",
     title: "What a commercial midrate is, and why your bank quotes something else",
     dek: "The difference between the rate that clears the interbank market and the rate on your ticket is not a mystery. It is a spread, and it has a size.",
     tag: "Method",
@@ -29,6 +32,7 @@ export const POSTS: Post[] = [
   },
   {
     slug: "why-quarter-end-is-too-late",
+    thumb: "importBerth",
     title: "Why quarter-end is the wrong time to learn your FX cost",
     dek: "By the time an FX loss reaches the management accounts, every decision that produced it has already been taken.",
     tag: "Practice",
@@ -42,6 +46,7 @@ export const POSTS: Post[] = [
   },
   {
     slug: "what-competition-does-to-a-quote",
+    thumb: "exportYard",
     title: "What competition does to a quote",
     dek: "A request sent to one dealer and the same request sent to five are not the same request, even before anyone answers.",
     tag: "Method",

@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { Footer } from "@/components/site/footer";
 import { Nav } from "@/components/site/nav";
 import { Arrow } from "@/components/ui/button";
 import { POSTS } from "@/lib/posts";
+import { PHOTOS, photoUrl } from "@/lib/photos";
 
 export const metadata: Metadata = {
   title: "Research",
@@ -43,7 +45,7 @@ export default function BlogIndex() {
                 <li key={post.slug} className="border-b border-line">
                   <Link
                     href={`/blog/${post.slug}`}
-                    className="group grid gap-4 py-10 lg:grid-cols-[10rem_minmax(0,1fr)] lg:gap-12"
+                    className="group grid gap-5 py-10 lg:grid-cols-[10rem_minmax(0,1fr)_16rem] lg:gap-12"
                   >
                     <div>
                       <p className="font-mono text-[0.625rem] uppercase tracking-[0.16em] text-azure-500">
@@ -68,6 +70,16 @@ export default function BlogIndex() {
                           {post.readingTime}
                         </span>
                       </p>
+                    </div>
+
+                    <div className="relative hidden aspect-[4/3] overflow-hidden rounded-xl bg-paper-mist ring-1 ring-line lg:block">
+                      <Image
+                        src={photoUrl(PHOTOS[post.thumb], 640, 480)}
+                        alt=""
+                        fill
+                        sizes="16rem"
+                        className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                      />
                     </div>
                   </Link>
                 </li>

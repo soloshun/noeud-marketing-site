@@ -10,6 +10,8 @@ import { Lifecycle } from "@/components/site/lifecycle";
 import { Nav } from "@/components/site/nav";
 import { Pricing } from "@/components/site/pricing";
 import { Questions } from "@/components/site/questions";
+import { Statement } from "@/components/site/statement";
+// import { SurfaceTour } from "@/components/site/surface-tour";
 import { Surfaces } from "@/components/site/surfaces";
 import { Trade } from "@/components/site/trade";
 
@@ -23,12 +25,14 @@ export default function Home() {
         <Audience />
         <Trade />
         <Surfaces />
+        {/* <SurfaceTour /> */}
         <Film />
         <Lifecycle />
         <Pricing />
         <Institutions />
         <Founder />
         <Questions />
+        <Statement />
         <Apply />
       </main>
       <Footer />
