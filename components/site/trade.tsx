@@ -116,7 +116,20 @@ export function Trade() {
               transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
               className="grid items-center gap-12 lg:grid-cols-2 lg:gap-20"
             >
-              <div className="relative aspect-[5/4] overflow-hidden rounded-[1.25rem] bg-paper-mist">
+              <div className="relative">
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute -inset-6 -z-10 rounded-[2rem] opacity-70"
+                  style={{
+                    background:
+                      "radial-gradient(60% 50% at 30% 10%, rgba(155,215,240,0.32), transparent 70%), radial-gradient(50% 45% at 85% 95%, rgba(74,16,57,0.10), transparent 70%)",
+                  }}
+                />
+                <div
+                  aria-hidden="true"
+                  className="dot-canvas pointer-events-none absolute -inset-6 -z-10 rounded-[2rem] opacity-[0.3]"
+                />
+                <div className="relative aspect-[5/4] overflow-hidden rounded-[1.25rem] bg-paper-mist ring-1 ring-line">
                 <Image
                   src={photoUrl(side.photo, 1100, 880)}
                   alt={side.photo.alt}
@@ -133,6 +146,7 @@ export function Trade() {
                   <p className="tnum mt-1 font-mono text-[0.9375rem] text-white sm:text-[1.0625rem]">
                     {side.chipValue}
                   </p>
+                </div>
                 </div>
               </div>
 

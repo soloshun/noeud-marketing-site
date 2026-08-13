@@ -100,7 +100,22 @@ export function Audience() {
             </motion.div>
           </AnimatePresence>
 
-          <div className="relative aspect-[4/5] overflow-hidden rounded-[1.5rem] bg-paper-mist">
+          <div className="relative">
+            {/* a soft field behind the portrait so it sits in light rather
+                than on a flat swatch */}
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute -inset-6 -z-10 rounded-[2rem] opacity-70"
+              style={{
+                background:
+                  "radial-gradient(60% 50% at 70% 15%, rgba(155,215,240,0.35), transparent 70%), radial-gradient(50% 40% at 20% 90%, rgba(74,16,57,0.10), transparent 70%)",
+              }}
+            />
+            <div
+              aria-hidden="true"
+              className="dot-canvas pointer-events-none absolute -inset-6 -z-10 rounded-[2rem] opacity-[0.35]"
+            />
+            <div className="relative aspect-[4/5] overflow-hidden rounded-[1.5rem] bg-paper-mist ring-1 ring-line">
             <AnimatePresence mode="popLayout">
               <motion.div
                 key={role.id}
@@ -119,6 +134,7 @@ export function Audience() {
                 />
               </motion.div>
             </AnimatePresence>
+            </div>
           </div>
         </div>
       </div>
